@@ -73,9 +73,9 @@ class DataLoader_Bert:
 
     
     def __load(self):
-        df = pd.read_csv(f"{self.file_path}/train.csv").head(3000)
+        df = pd.read_csv(f"{self.file_path}/train.csv")
         self.train_df, self.valid_df = train_test_split(df, test_size=0.2, random_state=42)
-        self.test_df  = pd.read_csv(f"{self.file_path}/test.csv").head(1000)
+        self.test_df  = pd.read_csv(f"{self.file_path}/test.csv")
         
     
     def __preprocess(self, df, is_train=False):

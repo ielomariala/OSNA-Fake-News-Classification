@@ -106,7 +106,7 @@ class BertModel:
         for i in range(len(test_data)):
             row = test_data[i]
             submission.loc[i] = row[1], get_prediction(row[0])
-        submission.to_csv("predictions.csv", columns=['id','predictions'], index=False)
+        submission.to_csv("predictions.csv", columns=['id','label'], index=False)
         return submission
     
     

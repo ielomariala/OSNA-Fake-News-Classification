@@ -10,7 +10,6 @@ def main():
     model.fit(train_gen, valid_gen)
     model.save_model("save_model")
 
-    
 
 
 if __name__ == '__main__':
