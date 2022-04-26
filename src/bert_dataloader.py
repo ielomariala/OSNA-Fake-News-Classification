@@ -39,10 +39,12 @@ class DataTokenizerGen(tf.keras.utils.Sequence):
             pairs.tolist(), 
             add_special_tokens=True, 
             max_length=self.max_length,
+            pad_to_max_length = True,
             return_attention_mask=True,
             return_token_type_ids=True,
             pad_to_max_length=True,
             return_tensors="tf",
+            truncation = True
         )
         
         input_ids = np.array(encoded["input_ids"], dtype="int32")
