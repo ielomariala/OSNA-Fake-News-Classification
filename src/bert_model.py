@@ -1,13 +1,18 @@
 
 import tensorflow as tf
 import transformers as trsf
+from tensorflow.keras.callbacks import ModelCheckpoint
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
 
 class BertModel:
     
-    def __init__(self) -> None:
+    def __init__(self, max_length=256) -> None:
         self.strategy = tf.distribute.MirroredStrategy()
         self.model = None
-        self.max_length = 256
+        self.max_length = max_length
         self.history = None
                 
     def create_model(self, bert_trainable=False):
@@ -56,16 +61,52 @@ class BertModel:
                 metrics=["acc"],
             )
             
-    def fit(self, train_data, valid_data, epochs=5, batch_size=64):
+    def fit(self, train_data, valid_data, epochs=1, batch_size=256):
+        checkpoint = ModelCheckpoint("best_model.hdf5", monitor='loss', verbose=1,
+                                     save_weights_only=True, save_best_only=True, period=1)
+    
         self.history = self.model.fit(train_data,
                                       validation_data=valid_data,
                                       epochs=epochs, 
-                                      batch_size=batch_size)
+                                      batch_size=batch_size, 
+                                      callbacks=[checkpoint])
         return self.history
 
-    def save_model(self, model_name):
-        self.model.save(model_name)
-    
-    def load_model(self, model_name):
-        self.model = tf.keras.models.load_model(model_name)
+    def plot_history(self):
+        """Plot loss and accuracy"""
+        plt.subplot(211)
+        plt.plot(self.history.history["loss"], label="loss")
+        plt.plot(self.history.history["val_loss"], label="val_loss")
+        plt.xlabel('Epoch')
+        plt.ylabel('Loss')
+        plt.legend(loc='lower right')
+        plt.subplot(212)
+        plt.plot(self.history.history["acc"], label="acc")
+        plt.plot(self.history.history["val_acc"], label="val_acc")
+        plt.xlabel('Epoch')
+        plt.ylabel('Accuracy')
+        plt.legend(loc='lower right')
+        plt.show()
         
+    def save_weights(self, weights):
+        self.model.save_weights(weights)
+    
+    def load_from_weights(self, weights):
+        self.create_model()
+        self.model.load_weights(weights)
+        
+    def get_submission(self, test_data, labels):
+        def get_prediction(x):
+            result = self.model.predict(x)[0]
+            idx = np.argmax(result)
+            pred = result[idx]
+            return (pred, labels[idx])
+        
+        submission = pd.DataFrame(columns=["id", "label"])
+        for i in range(len(test_data)):
+            row = test_data[i]
+            submission.loc[i] = row[1], get_prediction(row[0])
+        submission.to_csv("predictions.csv", columns=['id','predictions'], index=False)
+        return submission
+    
+    
