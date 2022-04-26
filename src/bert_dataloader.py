@@ -42,7 +42,6 @@ class DataTokenizerGen(tf.keras.utils.Sequence):
             pad_to_max_length = True,
             return_attention_mask=True,
             return_token_type_ids=True,
-            pad_to_max_length=True,
             return_tensors="tf",
             truncation = True
         )
