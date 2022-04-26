@@ -13,7 +13,7 @@ class DataTokenizerGen(tf.keras.utils.Sequence):
         self.max_length = max_length
         self.pairs = data[["title1_en", "title2_en"]].values.astype("str")
         self.labels = labels
-        self.ids = data["id"].values.astype("int8")
+        self.ids = data["id"].values
         self.include_labels = include_labels
         self.batch_size = batch_size
         self.indexes = np.arange(len(self.pairs))
@@ -32,7 +32,7 @@ class DataTokenizerGen(tf.keras.utils.Sequence):
             labels = np.array(self.labels[indexes], dtype="int32")
             return self.get_features(pairs), labels
         else:
-            return self.get_features(pairs), self.ids[indexes]
+            return self.get_features(pairs), self.ids[index]
     
     def get_features(self, pairs):
         encoded = self.tokenizer.batch_encode_plus(
