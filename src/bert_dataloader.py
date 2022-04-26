@@ -6,6 +6,7 @@ import numpy as np
 import tensorflow as tf
 
 import transformers as trsf
+trsf.logging.set_verbosity_error()
 
 class DataTokenizerGen(tf.keras.utils.Sequence):
     
