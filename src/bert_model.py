@@ -86,6 +86,7 @@ class BertModel:
         plt.xlabel('Epoch')
         plt.ylabel('Accuracy')
         plt.legend(loc='lower right')
+        plt.savefig("history.png")
         plt.show()
         
     def save_weights(self, weights):
