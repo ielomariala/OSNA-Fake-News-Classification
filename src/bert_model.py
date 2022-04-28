@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-
 class BertModel:
     
     def __init__(self, max_length=256) -> None:
@@ -109,5 +108,3 @@ class BertModel:
             submission.loc[i] = row[1], get_prediction(row[0])
         submission.to_csv("predictions.csv", columns=['id','label'], index=False)
         return submission
-    
-    
